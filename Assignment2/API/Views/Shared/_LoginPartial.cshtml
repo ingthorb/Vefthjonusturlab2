@@ -1,10 +1,10 @@
 @using Microsoft.AspNetCore.Identity
 @using WebApplication.Models
 
-@inject SignInManager<ApplicationUser> SignInManager
+@inject <ApplicationUser> 
 @inject UserManager<ApplicationUser> UserManager
 
-@if (SignInManager.IsSignedIn(User))
+@if (.IsSignedIn(User))
 {
     <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
         <ul class="nav navbar-nav navbar-right">

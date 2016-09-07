@@ -12,17 +12,22 @@ using Microsoft.Extensions.Logging;
 using WebApplication.Data;
 using WebApplication.Models;
 using WebApplication.Services;
+using Assignment2.API.Services;
 
 namespace WebApplication
 {
     public class Startup
     {
+
+        private string _rootfolder;
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            _rootfolder = env.ContentRootPath;
 
             if (env.IsDevelopment())
             {
@@ -40,18 +45,16 @@ namespace WebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            services.AddDbContext<AppDataContext>(options =>
+                options.UseSqlite($"Data Source={ _rootfolder}/Courses.db"));
 
             services.AddMvc();
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<ICoursesService, CoursesService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,8 +75,6 @@ namespace WebApplication
             }
 
             app.UseStaticFiles();
-
-            app.UseIdentity();
 
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 
